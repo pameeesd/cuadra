@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ComprobanteExtraido",
+  "description": "Salida esperada de la IA al leer la foto de un comprobante.",
+  "type": "object",
+  "required": ["tipo", "comercio", "fecha", "monto", "categoria", "confianza"],
+  "additionalProperties": false,
+  "properties": {
+    "tipo": {
+      "type": "string",
+      "enum": ["gasto", "ingreso"],
+      "description": "Gasto si es una boleta o voucher de compra; ingreso si es una transferencia o abono recibido."
+    },
+    "comercio": {
+      "type": ["string", "null"],
+      "description": "Nombre del comercio o de quien envía la transferencia. Nulo si no se lee."
+    },
+    "fecha": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Fecha del comprobante en formato AAAA-MM-DD. Nulo si no se lee."
+    },
+    "monto": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "Monto total pagado o recibido, en pesos chilenos y sin decimales. No confundir con IVA, subtotal ni número de operación."
+    },
+    "categoria": {
+      "type": ["string", "null"],
+      "enum": [
+        "Alimentación", "Servicios básicos", "Salud", "Transporte", "Hogar",
+        "Educación", "Entretenimiento", "Otros gastos",
+        "Sueldo", "Abono por transferencia", "Otros ingresos", null
+      ]
+    },
+    "confianza": {
+      "type": "object",
+      "required": ["comercio", "fecha", "monto", "categoria"],
+      "additionalProperties": false,
+      "description": "Seguridad de la IA en cada campo, de 0 a 1.",
+      "properties": {
+        "comercio":  { "type": "number", "minimum": 0, "maximum": 1 },
+        "fecha":     { "type": "number", "minimum": 0, "maximum": 1 },
+        "monto":     { "type": "number", "minimum": 0, "maximum": 1 },
+        "categoria": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}
